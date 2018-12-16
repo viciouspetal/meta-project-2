@@ -1,11 +1,13 @@
 from reader import Reader
+import sys
 
 
-def cnf_parser(cnf_path):
+def cnf_parser(cnf_path='./sat_data/uf20-01.cnf'):
     """
+    Parses CNF files. Outputs an array of arrays where each element in the parent array represents a SAT clause.
 
     :param cnf_path: path to CNF file from which SAT clauses and variable stat will be read
-    :return: returns an array of arrays, where each element of the parent array represents a SAT clause
+    :return: returns an array of arrays, representing SAT clauses
     """
     reader = Reader(cnf_path)
     in_data = reader.read()
@@ -33,5 +35,5 @@ def cnf_parser(cnf_path):
     return cnf
 
 if __name__ == '__main__':
-    path = './sat_data/uf20-01.cnf'
+    path = sys.argv[1]
     cnf_parser(path)
