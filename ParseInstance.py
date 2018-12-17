@@ -81,7 +81,7 @@ class ParseInstance:
         return vars
 
     def solutionStatus(self, instance, sol):
-        # printIfDebugOn("Instance: {0}\n instance[1]: {1}\n solution: {2}".format(instance, instance[1], sol), debug)
+        #print("Instance: {0}\n instance[1]: {1}\n solution: {2}".format(instance, instance[1], sol))
         clause = instance[1]
         unsat_clause = 0
         for clause_i in clause:
@@ -99,9 +99,9 @@ class ParseInstance:
             if not cStatus:
                 unsat_clause += 1
         if unsat_clause > 0:
-            # printIfDebugOn("UNSAT Clauses: {0}".format(unsat_clause), debug)
-            return False
-        return True
+            #print("UNSAT Clauses: {0}".format(unsat_clause))
+            return False, unsat_clause
+        return True, unsat_clause
 
 
 # usage
