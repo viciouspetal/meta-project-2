@@ -1,6 +1,9 @@
-import numpy as np
-from ParseInstance import ParseInstance
+import random as rd
 import sys
+
+import numpy as np
+
+from ParseInstance import ParseInstance
 
 
 class GsatSolver:
@@ -8,32 +11,56 @@ class GsatSolver:
     def main(self, instance_path="./sat_data/test.cnf"):
         parser = ParseInstance()
         instance = parser.readInstance(instance_path)
-        #print("instance {0}".format(instance))
+        # printIfDebugOn("instance {0}".format(instance), debug)
+        print("instance {0}".format(instance))
 
         var_count = len(instance[0])
-        initialVariables = self.initializeVariables(var_count)
+        initialVariables = self.initialize_variables(var_count)
         print(initialVariables)
 
-        formattedSol = self.formatSolution(initialVariables)
-        parser.solutionStatus(instance, formattedSol)
+        formattedSol = self.format_solution(initialVariables)
+        status = parser.solutionStatus(instance, formattedSol)
 
-    def initializeVariables(self, count):
+        iter_count = 0
+
+        while not status:
+            self.flip_variable(initialVariables)
+            formattedSol = self.format_solution(initialVariables)
+            status = parser.solutionStatus(instance, formattedSol)
+            iter_count = iter_count + 1
+
+        print("Solution found after {0} iterations. \n Solution is: {1}".format(iter_count, formattedSol))
+
+    def flip_variable(self, variables):
+        maxVar = len(variables) - 1
+
+        positionOfVarToFlip = rd.randint(0, maxVar)
+        varToFlip = variables[positionOfVarToFlip]
+
+        if varToFlip == 0:
+            variables[positionOfVarToFlip] = 1
+        else:
+            variables[positionOfVarToFlip] = 0
+
+        return variables
+
+    def initialize_variables(self, count):
         return np.random.randint(2, size=count)
 
-    def formatSolution(self, solutionProposed):
-        # format {ordinalOfVariable: variableValue, ordinalOfVariable: variableValue}
-        tmp = {}
-        for var in range(0, len(solutionProposed)):
-            tmp[var+1] = solutionProposed[var]
+    def format_solution(self, solution_proposed):
 
-        print("Formatted solution {0}". format(tmp))
+        tmp = {}
+        for var in range(0, len(solution_proposed)):
+            tmp[var + 1] = solution_proposed[var]
+
+        # printIfDebugOn("Formatted solution {0}". format(tmp), debug)
         return tmp
 
 
 if __name__ == '__main__':
     solver = GsatSolver()
-    path = sys.argv[1]
-    if(path != None):
-        solver.main(path)
+
+    if len(sys.argv) > 1:
+        solver.main(sys.argv[1])
     else:
         solver.main()
