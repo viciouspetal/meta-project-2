@@ -1,3 +1,4 @@
+"""Based off of Week 8 Lab"""
 import sys
 
 
@@ -54,32 +55,6 @@ class ParseInstance:
         file.close()
         return [variables, clause]
 
-    def readSolution(self, fName):
-        file = open(fName, 'r')
-        vars = {}
-        for line in file:
-            data = line.split()
-            # print(data)
-
-            # print data
-            if len(data) == 0:
-                continue
-            if data[0] == 'c':
-                continue
-            if data[0] == 'v':
-                del data[0]
-            for literal in data:
-                literal = int(literal)
-                if literal == 0:
-                    break
-                var = literal
-                if var < 0:
-                    vars[-var] = 0
-                else:
-                    vars[var] = 1
-        file.close()
-        return vars
-
     def solutionStatus(self, instance, sol):
         #print("Instance: {0}\n instance[1]: {1}\n solution: {2}".format(instance, instance[1], sol))
         clause = instance[1]
@@ -102,21 +77,3 @@ class ParseInstance:
             #print("UNSAT Clauses: {0}".format(unsat_clause))
             return False, unsat_clause
         return True, unsat_clause
-
-
-# usage
-# python ParseInstance.py [instance-file] [sol-file]
-# python ParseInstance.py uf20-01.cnf 1.txt
-
-if __name__ == '__main__':
-    parser = ParseInstance()
-
-    print("File: ", sys.argv[1])
-    print("Sol File: ", sys.argv[2])
-    sat = parser.readInstance(sys.argv[1])
-
-    print("Total Clauses: ", len(sat[0]))
-    sol = parser.readSolution(sys.argv[2])
-    print("Sol vars {0}".format(sol))
-    #
-    print("Status: ", parser.solutionStatus(sat, sol))
