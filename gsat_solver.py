@@ -25,12 +25,9 @@ class GsatSolver:
 
             for iteration in range(max_iterations):
                 # generate a random temp solution to work on
-                tmp_solution = tmp_best_solution
-                #print("tmp solution",tmp_solution)
-                #print("Before flip: {0}".format(tmp_solution))
+                tmp_solution = currently_best_solution
                 # flip the variables at random
                 self.randomly_flip_variable(tmp_solution)
-                #print("After flip: {0}".format(tmp_solution))
 
                 solution_status, no_of_unsat_clauses = parser.solutionStatus(instance, self.format_solution(tmp_solution))
 
@@ -45,7 +42,7 @@ class GsatSolver:
                     currently_best_solution = tmp_solution
                     print("Current best no of unsat {0}, proposed best no of unsat {1}, tmp solution {2}, currently best solution {3}". format(best_no_of_unsat_clauses, no_of_unsat_clauses,tmp_solution, currently_best_solution))
 
-            best_solution = currently_best_solution
+            #best_solution = currently_best_solution
             print("############ restart #################")
             GsatSolver.tabu = []
 
@@ -69,7 +66,6 @@ class GsatSolver:
         print("Solution found after {0} iterations. \n Solution is: {1}".format(iter_count, formattedSol))
 
     def randomly_flip_variable(self, variables):
-        #print("vars before flip: ", variables)
         maxVar = len(variables) - 1
 
         position_of_var_to_flip = self.get_flip_position(maxVar)
@@ -77,7 +73,6 @@ class GsatSolver:
 
         while(self.is_var_tabu(position_of_var_to_flip)):
             position_of_var_to_flip=self.get_flip_position(maxVar)
-            #print("position of var to be flipped {0}".format(position_of_var_to_flip))
             var_to_flip = variables[position_of_var_to_flip]
 
         self.add_to_tabu(position_of_var_to_flip)
@@ -118,6 +113,7 @@ if __name__ == '__main__':
     solver = GsatSolver()
 
     if len(sys.argv) > 1:
-        solver.main(10, 1000, 5, sys.argv[1])
+        for i in range(100):
+            solver.main(10, 1000, 5, sys.argv[1])
     else:
         solver.main()
