@@ -5,8 +5,10 @@ import numpy as np
 
 from ParseInstance import ParseInstance
 
-tabu=[]
+
 class GsatSolver:
+    tabu=[]
+    max_tabu_elements = 5
 
     def main(self, max_restarts=10, max_iterations=1000, tabu_limit=5, instance_path="./sat_data/test.cnf"):
         # self.simple_solution(instance_path)
@@ -14,7 +16,7 @@ class GsatSolver:
         instance = parser.readInstance(instance_path)
         var_count = len(instance[0])
         best_solution = self.initialize_variables(var_count)
-        print("best solution: ", best_solution)
+        print("initial best solution: {0}".format(best_solution))
 
         for restart in range(max_restarts):
             best_no_of_unsat_clauses = var_count
@@ -27,7 +29,7 @@ class GsatSolver:
                 #print("tmp solution",tmp_solution)
                 #print("Before flip: {0}".format(tmp_solution))
                 # flip the variables at random
-                self.flip_variable(tmp_solution)
+                self.randomly_flip_variable(tmp_solution)
                 #print("After flip: {0}".format(tmp_solution))
 
                 solution_status, no_of_unsat_clauses = parser.solutionStatus(instance, self.format_solution(tmp_solution))
@@ -45,6 +47,7 @@ class GsatSolver:
 
             best_solution = currently_best_solution
             print("############ restart #################")
+            GsatSolver.tabu = []
 
 
     def simple_solution(self, instance_path):
@@ -59,29 +62,47 @@ class GsatSolver:
         status = parser.solutionStatus(instance, formattedSol)
         iter_count = 0
         while not status:
-            self.flip_variable(variables)
+            self.randomly_flip_variable(variables)
             formattedSol = self.format_solution(variables)
             status = parser.solutionStatus(instance, formattedSol)
             iter_count = iter_count + 1
         print("Solution found after {0} iterations. \n Solution is: {1}".format(iter_count, formattedSol))
 
-    def flip_variable(self, variables):
+    def randomly_flip_variable(self, variables):
         #print("vars before flip: ", variables)
         maxVar = len(variables) - 1
 
-        positionOfVarToFlip = rd.randint(0, maxVar)
-        varToFlip = variables[positionOfVarToFlip]
+        position_of_var_to_flip = self.get_flip_position(maxVar)
+        var_to_flip = variables[position_of_var_to_flip]
 
-        if varToFlip == 0:
-            variables[positionOfVarToFlip] = 1
+        while(self.is_var_tabu(var_to_flip)):
+            position_of_var_to_flip=self.get_flip_position(maxVar)
+            var_to_flip = variables[position_of_var_to_flip]
+
+        self.add_to_tabu(position_of_var_to_flip)
+
+        if var_to_flip == 0:
+            variables[position_of_var_to_flip] = 1
         else:
-            variables[positionOfVarToFlip] = 0
+            variables[position_of_var_to_flip] = 0
 
         return variables
 
-    def check_if_var_is_tabu(self, variable):
+    def get_flip_position(self, maxPosition):
+        return rd.randint(0, maxPosition)
+
+    def is_var_tabu(self, variable):
         #7 in a -> from SO, fastes way to check if value is in array....may not be good for multidimensional arrays....
-        pass
+        print("Tabu list has {0} elements. Tabu list is: {1}. Var {2} is in tabu list {3}". format(len(GsatSolver.tabu), GsatSolver.tabu, variable, variable in GsatSolver.tabu))
+        return variable in GsatSolver.tabu
+
+    def add_to_tabu(self, position_to_tabu):
+        if len(GsatSolver.tabu) >= GsatSolver.max_tabu_elements:
+            print("before",GsatSolver.tabu)
+            GsatSolver.tabu.pop(0)
+            print("after",GsatSolver.tabu)
+
+        GsatSolver.tabu.append(position_to_tabu)
 
     def initialize_variables(self, count):
         return np.random.randint(2, size=count)
@@ -99,6 +120,6 @@ if __name__ == '__main__':
     solver = GsatSolver()
 
     if len(sys.argv) > 1:
-        solver.main(10, 1000, 5, sys.argv[1])
+        solver.main(10, 10, 5, sys.argv[1])
     else:
         solver.main()
