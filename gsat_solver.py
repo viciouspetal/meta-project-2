@@ -17,7 +17,7 @@ class GsatSolver:
         print("best solution: ", best_solution)
 
         for restart in range(max_restarts):
-            best_state_after_var_flip = var_count
+            best_no_of_unsat_clauses = var_count
             tmp_best_solution = best_solution
             currently_best_solution = tmp_best_solution
 
@@ -25,20 +25,26 @@ class GsatSolver:
                 # generate a random temp solution to work on
                 tmp_solution = tmp_best_solution
                 #print("tmp solution",tmp_solution)
-
+                #print("Before flip: {0}".format(tmp_solution))
                 # flip the variables at random
                 self.flip_variable(tmp_solution)
+                #print("After flip: {0}".format(tmp_solution))
 
                 solution_status, no_of_unsat_clauses = parser.solutionStatus(instance, self.format_solution(tmp_solution))
 
+                # if solution has been found terminate the search
                 if solution_status:
                     print("Solution found at iteration: {0}, during {1} restart.\nSolution is: {2}".format(iteration, restart, tmp_solution))
                     return
 
-                # check if proposed temp solution is better than previous best
-                if no_of_unsat_clauses < best_state_after_var_flip:
-                    best_solution = no_of_unsat_clauses
+                # if solution hasn't been found check if proposed temp solution is better than previous best
+                if no_of_unsat_clauses < best_no_of_unsat_clauses:
+                    best_no_of_unsat_clauses = no_of_unsat_clauses
                     currently_best_solution = tmp_solution
+                    print("Current best no of unsat {0}, proposed best no of unsat {1}, tmp solution {2}, currently best solution {3}". format(best_no_of_unsat_clauses, no_of_unsat_clauses,tmp_solution, currently_best_solution))
+
+            best_solution = currently_best_solution
+            print("############ restart #################")
 
 
     def simple_solution(self, instance_path):
@@ -60,7 +66,7 @@ class GsatSolver:
         print("Solution found after {0} iterations. \n Solution is: {1}".format(iter_count, formattedSol))
 
     def flip_variable(self, variables):
-        print("vars before flip: ", variables)
+        #print("vars before flip: ", variables)
         maxVar = len(variables) - 1
 
         positionOfVarToFlip = rd.randint(0, maxVar)
