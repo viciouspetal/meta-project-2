@@ -5,10 +5,10 @@ import numpy as np
 
 from ParseInstance import ParseInstance
 
-
+tabu=[]
 class GsatSolver:
 
-    def main(self, max_restarts=10, max_iterations=1000, instance_path="./sat_data/test.cnf"):
+    def main(self, max_restarts=10, max_iterations=1000, tabu_limit=5, instance_path="./sat_data/test.cnf"):
         # self.simple_solution(instance_path)
         parser = ParseInstance()
         instance = parser.readInstance(instance_path)
@@ -79,6 +79,10 @@ class GsatSolver:
 
         return variables
 
+    def check_if_var_is_tabu(self, variable):
+        #7 in a -> from SO, fastes way to check if value is in array....may not be good for multidimensional arrays....
+        pass
+
     def initialize_variables(self, count):
         return np.random.randint(2, size=count)
 
@@ -95,6 +99,6 @@ if __name__ == '__main__':
     solver = GsatSolver()
 
     if len(sys.argv) > 1:
-        solver.main(10, 1000, sys.argv[1])
+        solver.main(10, 1000, 5, sys.argv[1])
     else:
         solver.main()
