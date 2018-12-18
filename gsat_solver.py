@@ -75,8 +75,9 @@ class GsatSolver:
         position_of_var_to_flip = self.get_flip_position(maxVar)
         var_to_flip = variables[position_of_var_to_flip]
 
-        while(self.is_var_tabu(var_to_flip)):
+        while(self.is_var_tabu(position_of_var_to_flip)):
             position_of_var_to_flip=self.get_flip_position(maxVar)
+            #print("position of var to be flipped {0}".format(position_of_var_to_flip))
             var_to_flip = variables[position_of_var_to_flip]
 
         self.add_to_tabu(position_of_var_to_flip)
@@ -92,15 +93,12 @@ class GsatSolver:
         return rd.randint(0, maxPosition)
 
     def is_var_tabu(self, variable):
-        #7 in a -> from SO, fastes way to check if value is in array....may not be good for multidimensional arrays....
-        print("Tabu list has {0} elements. Tabu list is: {1}. Var {2} is in tabu list {3}". format(len(GsatSolver.tabu), GsatSolver.tabu, variable, variable in GsatSolver.tabu))
+       # print("Tabu list has {0} elements. Tabu list is: {1}. Var {2} is in tabu list {3}". format(len(GsatSolver.tabu), GsatSolver.tabu, variable, variable in GsatSolver.tabu))
         return variable in GsatSolver.tabu
 
     def add_to_tabu(self, position_to_tabu):
         if len(GsatSolver.tabu) >= GsatSolver.max_tabu_elements:
-            print("before",GsatSolver.tabu)
             GsatSolver.tabu.pop(0)
-            print("after",GsatSolver.tabu)
 
         GsatSolver.tabu.append(position_to_tabu)
 
@@ -120,6 +118,6 @@ if __name__ == '__main__':
     solver = GsatSolver()
 
     if len(sys.argv) > 1:
-        solver.main(10, 10, 5, sys.argv[1])
+        solver.main(10, 1000, 5, sys.argv[1])
     else:
         solver.main()
