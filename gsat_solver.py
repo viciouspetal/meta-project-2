@@ -16,52 +16,61 @@ class GsatSolver:
         instance = parser.readInstance(instance_path)
         var_count = len(instance[0])
 
-        # print("~ experiment {0} ~".format(experiment_count))
+        print("~ experiment {0} ~".format(experiment_count))
         start = time. time()
         end = None
+
         for restart in range(max_restarts):
-            #print("#### restart {0} ###".format(restart))
+            # print("#### restart {0} ###".format(restart))
             best_solution = self.initialize_variables(var_count)
-            # print("initial best solution: {0}".format(best_solution))
+            GsatSolver.tabu = []
 
-            best_no_of_unsat_clauses = var_count
-
+            #print(best_solution)
             for iteration in range(max_iterations):
+                solution_status, no_of_unsat_clauses = self.solutionStatus(instance, best_solution)
+
                 # if solution has been found terminate the search
-                for i in range(1, var_count + 1):
-                    position_of_var_to_flip = i
-                    var_to_flip = best_solution[position_of_var_to_flip]
+                if solution_status is True:
+                    end = time. time()
 
-                    if self.is_var_tabu(position_of_var_to_flip):
-                        continue
+                    print("Iteration,{0},Restart,{1},Duration,{2}".format(iteration, restart, end - start))
+                    return
+                best_solution = self.get_best_var_to_flip(instance, best_solution, no_of_unsat_clauses)
 
-                    best_solution[position_of_var_to_flip] = self.flip_var(var_to_flip)
-
-                    solution_status, no_of_unsat_clauses = parser.solutionStatus(instance, best_solution)
-
-                    if solution_status:
-                        end = time. time()
-
-                        print("Iteration,{0},Restart,{1},Duration,{2}".format(iteration, restart, end - start))
-                        return
-                    # if solution hasn't been found check if proposed temp solution is better than previous best
-                    if no_of_unsat_clauses < best_no_of_unsat_clauses:
-                        best_no_of_unsat_clauses = no_of_unsat_clauses
-
-                        # add current selection to tabu list
-                        self.add_to_tabu(position_of_var_to_flip)
-                    # print("Best solution so far: {0}, unsat {1}".format(best_solution, no_of_unsat_clauses))
-                    # print("tabu list {0}".format(GsatSolver.tabu))
-                    else:
-                        # reversing the var flip as it did not improve the solution
-                        best_solution[position_of_var_to_flip] = self.flip_var(best_solution[position_of_var_to_flip])
 
             # resetting tabu list in between the restarts
-            GsatSolver.tabu = []
+
+
+    def get_best_var_to_flip(self, instance, best_solution, current_no_of_unsat_clauses):
+        best_no_of_unsat_clauses = current_no_of_unsat_clauses
+        best = best_solution.copy()
+
+        for i in range(1, len(best)):
+            # checking if given variable is part of tabu list. If it is then next var is selected for the flip
+            if self.is_var_tabu(i):
+                 continue
+
+            tmp_solution = best_solution.copy()
+            # working copy of the proposed solution
+            var_to_flip = tmp_solution[i]
+
+            tmp_solution[i] = self.flip_var(var_to_flip)
+
+            _, no_of_unsat_clauses = self.solutionStatus(instance, tmp_solution)
+
+            # if solution hasn't been found check if proposed temp solution is better than previous best
+            if no_of_unsat_clauses < best_no_of_unsat_clauses:
+                best_no_of_unsat_clauses = no_of_unsat_clauses
+
+                # add current selection to tabu list
+                self.add_to_tabu(i)
+                best = tmp_solution.copy()
+
+        return best
 
     def flip_var(self, variable):
         """
-        Simple utility method that flips a value of a variable to the opposite value, e.g. if variable passed in has value of 0 it returns 1 and vice versa
+        Flips a value of a variable to the opposite value, e.g. if variable passed in has value of 0 it returns 1 and vice versa
         :param variable: variable to be flipped
         :return: variable of opposing value
         """
@@ -91,31 +100,49 @@ class GsatSolver:
         which corresponds to the first element in the list
         :param position_to_tabu: index, or position of a variable to be restricted
         """
-        if len(GsatSolver.tabu) >= GsatSolver.max_tabu_elements:
+        if len(GsatSolver.tabu) == GsatSolver.max_tabu_elements:
             GsatSolver.tabu.pop(0)
 
         GsatSolver.tabu.append(position_to_tabu)
 
     def initialize_variables(self, count):
         """
-        Initialize an array of a given size - defined by count parameter - with randomly assigned 0 or 1 values.
-        :param count: size of the array to be initialized
-        :return: Array initialized with randomly assigned 0 and 1 values
+        Initialize a dictionary of a given size - defined by count parameter - with randomly assigned 0 or 1 values.
+        :param count: the number of variables to be initialized
+        :return: a dictionary initialized with randomly assigned 0 and 1 values
         """
 
         return dict(enumerate(np.random.randint(2, size=count), 1))
+
+    def solutionStatus(self, instance, sol):
+        #print("Instance: {0}\n instance[1]: {1}\n solution: {2}".format(instance, instance[1], sol))
+        clause = instance[1]
+        unsat_clause = 0
+        for clause_i in clause:
+            cStatus = False
+            tmp = []
+            for var in clause_i:
+                if var < 0:
+                    if (1 - sol[-var]) == 1:
+                        cStatus = True
+                    tmp.append([var, sol[-var]])
+                else:
+                    tmp.append([var, sol[var]])
+                    if sol[var] == 1:
+                        cStatus = True
+            if not cStatus:
+                unsat_clause += 1
+        if unsat_clause > 0:
+            #print("UNSAT Clauses: {0}".format(unsat_clause))
+            return False, unsat_clause
+        return True, unsat_clause
 
 if __name__ == '__main__':
     solver = GsatSolver()
 
     if len(sys.argv) > 1:
-        for i in range(100):
+        for i in range(10):
             solver.main(10, 1000, sys.argv[1], i)
     else:
-        solver.main()
-
-
-
-
-"the code you want to test stays here"
-
+        for i in range(10):
+            solver.main(experiment_count=1)
