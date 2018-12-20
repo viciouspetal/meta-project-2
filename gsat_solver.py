@@ -1,66 +1,101 @@
-import random as rd
 import sys
+import time
 
-import numpy as np
 
-from ParseInstance import ParseInstance
+from GsatUtils import GsatUtils
 
 
 class GsatSolver:
+    # maintains a tabu list throughout the runs
+    tabu = []
+    max_tabu_elements = 5
 
-    def main(self, instance_path="./sat_data/test.cnf"):
-        parser = ParseInstance()
-        instance = parser.readInstance(instance_path)
-        # printIfDebugOn("instance {0}".format(instance), debug)
-        print("instance {0}".format(instance))
-
+    def main(self, max_restarts=100, max_iterations=1000, instance_path="./sat_data/test.cnf", experiment_count=1):
+        utils = GsatUtils()
+        instance = utils.readInstance(instance_path)
         var_count = len(instance[0])
-        initialVariables = self.initialize_variables(var_count)
-        print(initialVariables)
 
-        formattedSol = self.format_solution(initialVariables)
-        status = parser.solutionStatus(instance, formattedSol)
+        print("~ experiment {0} ~".format(experiment_count))
+        start = time. time()
+        end = None
 
-        iter_count = 0
+        for restart in range(max_restarts):
+            # print("#### restart {0} ###".format(restart))
+            best_solution = utils.initialize_variables(var_count)
 
-        while not status:
-            self.flip_variable(initialVariables)
-            formattedSol = self.format_solution(initialVariables)
-            status = parser.solutionStatus(instance, formattedSol)
-            iter_count = iter_count + 1
+            for iteration in range(max_iterations):
+                solution_status, no_of_unsat_clauses = utils.solutionStatus(instance, best_solution)
 
-        print("Solution found after {0} iterations. \n Solution is: {1}".format(iter_count, formattedSol))
+                # if solution has been found terminate the search
+                if solution_status is True:
+                    end = time. time()
 
-    def flip_variable(self, variables):
-        maxVar = len(variables) - 1
+                    print("Iteration,{0},Restart,{1},Duration,{2}, Solution, {3}".format(iteration, restart, end - start, best_solution))
+                    return
+                best_solution = self.get_best_var_to_flip(instance, best_solution, no_of_unsat_clauses)
 
-        positionOfVarToFlip = rd.randint(0, maxVar)
-        varToFlip = variables[positionOfVarToFlip]
+            # resetting tabu list in between the restarts
+            GsatSolver.tabu = []
 
-        if varToFlip == 0:
-            variables[positionOfVarToFlip] = 1
-        else:
-            variables[positionOfVarToFlip] = 0
+    def get_best_var_to_flip(self, instance, best_solution, current_no_of_unsat_clauses):
+        best_no_of_unsat_clauses = current_no_of_unsat_clauses
+        best = best_solution.copy()
+        utils = GsatUtils()
 
-        return variables
+        for i in range(1, len(best)):
+            # checking if given variable is part of tabu list. If it is then next var is selected for the flip
+            if self.is_var_tabu(i):
+                 continue
 
-    def initialize_variables(self, count):
-        return np.random.randint(2, size=count)
+            tmp_solution = best_solution.copy()
+            # working copy of the proposed solution
+            var_to_flip = tmp_solution[i]
 
-    def format_solution(self, solution_proposed):
+            # flipping a selected variable to opposing value
+            tmp_solution[i] = utils.flip_var(var_to_flip)
 
-        tmp = {}
-        for var in range(0, len(solution_proposed)):
-            tmp[var + 1] = solution_proposed[var]
+            _, no_of_unsat_clauses = utils.solutionStatus(instance, tmp_solution)
 
-        # printIfDebugOn("Formatted solution {0}". format(tmp), debug)
-        return tmp
+            # if solution hasn't been found check if proposed temp solution is better than previous best
+            if no_of_unsat_clauses < best_no_of_unsat_clauses:
+                best_no_of_unsat_clauses = no_of_unsat_clauses
 
+                # add current selection to tabu list
+                self.add_to_tabu(i)
+                # remember the best solution found so far for the next iteration
+                best = tmp_solution.copy()
+
+        return best
+
+    def is_var_tabu(self, variable):
+        """
+        Checks if a given variable is part of the tabu list
+        :param variable: variable to be checked against tabu list
+        :return: true if given variable is contained in tabu list. Otherwise false.
+        """
+
+        return variable in GsatSolver.tabu
+
+    def add_to_tabu(self, position_to_tabu):
+        """
+        Maintains a tabu list. If the number of tabu list elements is under the specified limit then simply adds
+        the new variable position to the list.
+        Otherwise, if the max number of elements in tabu list is reached it removes the oldest restriction -
+        which corresponds to the first element in the list
+        :param position_to_tabu: index, or position of a variable to be restricted
+        """
+        if len(GsatSolver.tabu) == GsatSolver.max_tabu_elements:
+            GsatSolver.tabu.pop(0)
+
+        GsatSolver.tabu.append(position_to_tabu)
 
 if __name__ == '__main__':
     solver = GsatSolver()
 
     if len(sys.argv) > 1:
-        solver.main(sys.argv[1])
+        for i in range(1
+                       ):
+            solver.main(10, 1000, sys.argv[1], i)
     else:
-        solver.main()
+        for i in range(1):
+            solver.main(experiment_count=i)
