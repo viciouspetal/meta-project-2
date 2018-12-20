@@ -1,8 +1,9 @@
 """Based off of Week 8 Lab"""
 import sys
 
+import numpy as np
 
-class ParseInstance:
+class GsatUtils:
 
     def readInstance(self, fName):
         file = open(fName, 'r')
@@ -55,9 +56,37 @@ class ParseInstance:
         file.close()
         return [variables, clause]
 
-    def solutionStatus(self, instance, sol):
-        #print("Instance: {0}\n instance[1]: {1}\n solution: {2}".format(instance, instance[1], sol))
-        clause = instance[1]
+    def flip_var(self, variable):
+        """
+        Flips a value of a variable to the opposite value, e.g. if variable passed in has value of 0 it returns 1 and vice versa
+        :param variable: variable to be flipped
+        :return: variable of opposing value
+        """
+        if variable == 0:
+            variable = 1
+        else:
+            variable = 0
+        return variable
+
+    def initialize_variables(self, count):
+        """
+        Initialize a dictionary of a given size - defined by count parameter - with randomly assigned 0 or 1 values.
+        :param count: the number of variables to be initialized
+        :return: a dictionary initialized with randomly assigned 0 and 1 values
+        """
+
+        return dict(enumerate(np.random.randint(2, size=count), 1))
+
+    def solutionStatus(self, formula, sol):
+        """
+        Verifies the number of unsatisified clauses for a given solution proposed. Returns True if a solution
+        satisfying all clauses has been found.
+        Returns False along with the number of unsatisfied clauses if a solution has not been found.
+        :param formula: the formula to be satisfied
+        :param sol: proposed solution to be verified against the formula
+        :return: True if solution satisfies the formula. Otherwise returns False and the number of unsatisfied clauses.
+        """
+        clause = formula[1]
         unsat_clause = 0
         for clause_i in clause:
             cStatus = False
@@ -74,6 +103,5 @@ class ParseInstance:
             if not cStatus:
                 unsat_clause += 1
         if unsat_clause > 0:
-            #print("UNSAT Clauses: {0}".format(unsat_clause))
             return False, unsat_clause
         return True, unsat_clause
