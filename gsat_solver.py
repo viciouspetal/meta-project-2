@@ -12,7 +12,7 @@ class GsatSolver:
 
     def main(self, max_restarts=100, max_iterations=1000, instance_path="./sat_data/test.cnf", experiment_count=1):
         utils = GsatUtils()
-        instance = utils.readInstance(instance_path)
+        instance = utils.read_instance(instance_path)
         var_count = len(instance[0])
 
         print("~ experiment {0} ~".format(experiment_count))
@@ -24,7 +24,7 @@ class GsatSolver:
             best_solution = utils.initialize_variables(var_count)
 
             for iteration in range(max_iterations):
-                solution_status, no_of_unsat_clauses = utils.solutionStatus(instance, best_solution)
+                solution_status, no_of_unsat_clauses = utils.solution_status(instance, best_solution)
 
                 # if solution has been found terminate the search
                 if solution_status is True:
@@ -54,7 +54,7 @@ class GsatSolver:
             # flipping a selected variable to opposing value
             tmp_solution[i] = utils.flip_var(var_to_flip)
 
-            _, no_of_unsat_clauses = utils.solutionStatus(instance, tmp_solution)
+            _, no_of_unsat_clauses = utils.solution_status(instance, tmp_solution)
 
             # if solution hasn't been found check if proposed temp solution is better than previous best
             if no_of_unsat_clauses < best_no_of_unsat_clauses:
@@ -93,8 +93,7 @@ if __name__ == '__main__':
     solver = GsatSolver()
 
     if len(sys.argv) > 1:
-        for i in range(1
-                       ):
+        for i in range(1):
             solver.main(10, 1000, sys.argv[1], i)
     else:
         for i in range(1):

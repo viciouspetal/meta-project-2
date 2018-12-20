@@ -1,11 +1,18 @@
-"""Based off of Week 8 Lab"""
+
 import sys
 
 import numpy as np
 
 class GsatUtils:
 
-    def readInstance(self, fName):
+    def read_instance(self, fName):
+        """Based off of Week 8 Lab
+        Reads in a a CNF file from a path provided.
+        Returns an array of arrays, where element 0 contains variables, and element 1 in itself is an array of arrays
+        where each internal array represents a 3-variable clause to be fulfilled.
+        :param fName: relative path to cnf file to be read in
+        :return variables and the formula
+        """
         file = open(fName, 'r')
         tVariables = -1
         tClauses = -1
@@ -77,8 +84,10 @@ class GsatUtils:
 
         return dict(enumerate(np.random.randint(2, size=count), 1))
 
-    def solutionStatus(self, formula, sol):
+    def solution_status(self, formula, sol):
         """
+        Based off of Week 8 Lab.
+
         Verifies the number of unsatisified clauses for a given solution proposed. Returns True if a solution
         satisfying all clauses has been found.
         Returns False along with the number of unsatisfied clauses if a solution has not been found.
