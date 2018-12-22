@@ -22,10 +22,9 @@ class NoveltySearch:
             solution_found, unsat_clause, unsat_clause_list = SatUtils.solution_status_with_unsat_clauses(self.instance,
                                                                                                           proposed_solution)
 
-            # print("Unsat clauses, {0}".format(unsat_clause))
             if solution_found is True:
                 end = time.time()
-                print("Iteration,{0},Duration,{1}, Solution, {2}".format(i, end - start, proposed_solution))
+                print("Iteration,{0},Duration,{1}".format(i, end - start))
                 return
 
             random_flip = random.choice(self.variables)

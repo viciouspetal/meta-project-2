@@ -49,7 +49,7 @@ class TestSolversAndUtils(unittest.TestCase):
         self.assertEqual(len(result), 10)
 
     def test_read_instance(self):
-        test_file_path = './sat_data/test.cnf'
+        test_file_path = './sat_test_data/test.cnf'
 
         cnf = SatUtils.read_instance(test_file_path)
         self.assertEqual(len(cnf), 2)
