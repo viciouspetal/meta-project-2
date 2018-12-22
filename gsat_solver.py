@@ -88,11 +88,14 @@ class GsatSolver:
 
 
 if __name__ == '__main__':
-    solver = GsatSolver()
+    instance_path = None
 
+    # check whether a path to input dataset has been provided or should the default path be used
     if len(sys.argv) > 1:
-        for i in range(1):
-            solver.main(10, 1000, sys.argv[1], i)
+        instance_path = sys.argv[1]
     else:
-        for i in range(1):
-            solver.main(experiment_count=i)
+        instance_path = "./sat_data/uf20-020.cnf"
+
+    solver = GsatSolver()
+    solver.main(10, 1000, instance_path)
+

@@ -1,4 +1,5 @@
 import random
+import sys
 import time
 
 from SatUtils import SatUtils
@@ -48,12 +49,15 @@ class NoveltyPlus:
 
 
 if __name__ == '__main__':
-    instance_path = "./sat_data/uf20-020.cnf"
+    instance_path = None
 
-    wp = 0.4
-    p = 0.3
+    # check whether a path to input dataset has been provided or should the default path be used
+    if len(sys.argv) > 1:
+        instance_path = sys.argv[1]
+    else:
+        instance_path = "./sat_data/uf20-020.cnf"
 
     solver = NoveltyPlus()
 
     for experiment in range(1):
-        solver.main(wp, p, 100000, instance_path)
+        solver.main(wp=0.4, p=0.3, max_iterations=100000, instance_path=instance_path)

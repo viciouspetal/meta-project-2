@@ -11,17 +11,39 @@ If file redirect is omitted all results will be printed to the console.
 
 # How to identify a solution?
 For each of the algorithms implemented, if a solution has been identified a single print statement will be shown in the console in the following format:
- - __GSAT:__ __"Iteration,1,Restart,0,Duration,0.0"__ - specifying during which restart and iteration a solution has been found, as well as how long it took in seconds, to find it
- - __Novelty & Novelty+:__ __"Iteration,48020,Duration,18.190040349960327"__ - since no restarts were specified for these algorithms, a solution print only provides information about which iteration has it been found and how long it took to find it in seconds 
+ - __GSAT:____"Iteration,1,Restart,0,Duration,0.0"__- specifying during which restart and iteration a solution has been found, as well as how long it took in seconds, to find it
+ - __Novelty and Novelty+:____"Iteration,48020,Duration,18.190040349960327"__- since no restarts were specified for these algorithms, a solution print only provides information about which iteration has it been found and how long it took to find it in seconds 
 
 # Running individual algorithms
-Additionally to running all experiments in 1 command, each algorithm, except WalkSAT has been setup to be run in isolation. As a result you could run GSAT, Novelty or Novelty+ individually.
+Additionally to running all experiments in 1 command, each algorithm, except WalkSAT, has been setup to be run in isolation. 
+As a result you could run GSAT, Novelty or Novelty+ individually, with either a specific CNF input file path provided or with a default one.
+
 ## Running GSAT
+To run GSAT in isolation there are 2 varieties of the commands to use:
+
 `python gsat_solver.py`
+will run the algorithm with the default CNF input file ___uf20-020.cnf___
+
+or
+ 
+`python gsat_solver.py <path_to_cnf_file>` will run it with CNF file specified 
 
 ## Running Novelty
-`python noveltysearch.py`
+To run Novelty in isolation there are 2 varieties of the commands to use:
+
+`python noveltysearch.py` will run the algorithm with the default CNF input file ___uf20-020.cnf___
+
+or 
+
+`python noveltysearch.py <path_to_cnf_file>` will run it with CNF file specified
 
 ## Running Novelty+
-`python novelty_plus.py`
+To run Novelty+ in isolation there are 2 varieties of the commands to use:
+
+`python novelty_plus.py` will run the algorithm with the default CNF input file ___uf20-020.cnf___
+
+or 
+
+
+`python novelty_plus.py <path_to_cnf_file>` will run it with CNF file specified
 

@@ -1,6 +1,7 @@
 import heapq
 import random
 import time
+import sys
 
 from SatUtils import SatUtils
 
@@ -79,7 +80,13 @@ class NoveltySearch:
 
 
 if __name__ == '__main__':
-    instance_path = "./sat_data/uf20-020.cnf"
+    instance_path = None
+
+    # check whether a path to input dataset has been provided or should the default path be used
+    if len(sys.argv) > 1:
+        instance_path = sys.argv[1]
+    else:
+        instance_path = "./sat_data/uf20-020.cnf"
 
     cnf_contents = SatUtils.read_instance(instance_path)
     solver = NoveltySearch(cnf_contents, 0.4, 100000)
