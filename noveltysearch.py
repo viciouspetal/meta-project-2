@@ -1,6 +1,7 @@
 import heapq
 import random
 import time
+import sys
 
 from SatUtils import SatUtils
 
@@ -22,10 +23,9 @@ class NoveltySearch:
             solution_found, unsat_clause, unsat_clause_list = SatUtils.solution_status_with_unsat_clauses(self.instance,
                                                                                                           proposed_solution)
 
-            # print("Unsat clauses, {0}".format(unsat_clause))
             if solution_found is True:
                 end = time.time()
-                print("Iteration,{0},Duration,{1}, Solution, {2}".format(i, end - start, proposed_solution))
+                print("Iteration,{0},Duration,{1}".format(i, end - start))
                 return
 
             random_flip = random.choice(self.variables)
@@ -80,7 +80,13 @@ class NoveltySearch:
 
 
 if __name__ == '__main__':
-    instance_path = "./sat_data/uf20-020.cnf"
+    instance_path = None
+
+    # check whether a path to input dataset has been provided or should the default path be used
+    if len(sys.argv) > 1:
+        instance_path = sys.argv[1]
+    else:
+        instance_path = "./sat_data/uf20-020.cnf"
 
     cnf_contents = SatUtils.read_instance(instance_path)
     solver = NoveltySearch(cnf_contents, 0.4, 100000)

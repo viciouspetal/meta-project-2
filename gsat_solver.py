@@ -9,16 +9,14 @@ class GsatSolver:
     tabu = []
     max_tabu_elements = 5
 
-    def main(self, max_restarts=100, max_iterations=1000, instance_path="./sat_data/test.cnf", experiment_count=1):
+    def main(self, max_restarts=10, max_iterations=1000, instance_path="./sat_data/test.cnf"):
         instance = SatUtils.read_instance(instance_path)
         var_count = len(instance[0])
 
-        print("~ experiment {0} ~".format(experiment_count))
         start = time.time()
         end = None
 
         for restart in range(max_restarts):
-            # print("#### restart {0} ###".format(restart))
             best_solution = SatUtils.initialize_variables(var_count)
 
             for iteration in range(max_iterations):
@@ -29,8 +27,7 @@ class GsatSolver:
                     end = time.time()
 
                     print(
-                        "Iteration,{0},Restart,{1},Duration,{2}, Solution, {3}".format(iteration, restart, end - start,
-                                                                                       best_solution))
+                        "Iteration,{0},Restart,{1},Duration,{2}".format(iteration, restart, end - start))
                     return
                 best_solution = self.get_best_var_to_flip(instance, best_solution, no_of_unsat_clauses)
 
@@ -91,11 +88,14 @@ class GsatSolver:
 
 
 if __name__ == '__main__':
-    solver = GsatSolver()
+    instance_path = None
 
+    # check whether a path to input dataset has been provided or should the default path be used
     if len(sys.argv) > 1:
-        for i in range(1):
-            solver.main(10, 1000, sys.argv[1], i)
+        instance_path = sys.argv[1]
     else:
-        for i in range(1):
-            solver.main(experiment_count=i)
+        instance_path = "./sat_data/uf20-020.cnf"
+
+    solver = GsatSolver()
+    solver.main(10, 1000, instance_path)
+
