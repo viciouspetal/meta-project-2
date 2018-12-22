@@ -14,15 +14,15 @@ class NoveltySearch:
         self.max_iterations = max_iterations
 
     def main(self):
-        utils = SatUtils()
-        proposed_solution = utils.initialize_variables(len(self.variables))
+        proposed_solution = SatUtils.initialize_variables(self.variables)
 
         start = time.time()
         end = None
         for i in range(self.max_iterations):
-            solution_found, unsat_clause, unsat_clause_list = utils.solution_status_with_unsat_clauses(self.instance, proposed_solution)
+            solution_found, unsat_clause, unsat_clause_list = SatUtils.solution_status_with_unsat_clauses(self.instance,
+                                                                                                          proposed_solution)
 
-            #print("Unsat clauses, {0}".format(unsat_clause))
+            # print("Unsat clauses, {0}".format(unsat_clause))
             if solution_found is True:
                 end = time.time()
                 print("Iteration,{0},Duration,{1}, Solution, {2}".format(i, end - start, proposed_solution))
@@ -33,7 +33,7 @@ class NoveltySearch:
 
             flip_this_index = self.execute_search(proposed_solution, random_flip, random_clause)
 
-            proposed_solution[flip_this_index] = utils.flip_var(proposed_solution[flip_this_index])
+            proposed_solution[flip_this_index] = SatUtils.flip_var(proposed_solution[flip_this_index])
 
     def execute_search(self, proposed_solution, currently_flipped_variable, random_clause):
         """
@@ -54,14 +54,14 @@ class NoveltySearch:
 
             # loop over the variables to see which flip generates the lowest number of unsatisfied clauses
             for i in range(len(self.variables)):
-                tmp_solution[i] = utils.flip_var(self.variables[i])
-                _, unsat_clauses = utils.solution_status(self.instance, tmp_solution)
+                tmp_solution[i] = SatUtils.flip_var(self.variables[i])
+                _, unsat_clauses = SatUtils.solution_status(self.instance, tmp_solution)
 
                 # keep track of which variable flip generated what number of unsatisfied clauses
                 flip_scores[self.variables[i]] = unsat_clauses
 
                 # flip the selected variable
-                tmp_solution[i] = utils.flip_var(self.variables[i])
+                tmp_solution[i] = SatUtils.flip_var(self.variables[i])
 
             # Find best and second best - extremely efficient according to stack overflow
             two_smallest_keys = heapq.nsmallest(2, flip_scores, key=flip_scores.get)
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     instance_path = "./sat_data/uf20-020.cnf"
 
     cnf_contents = SatUtils.read_instance(instance_path)
-    solver = NoveltySearch(cnf_contents,  0.4, 100000)
+    solver = NoveltySearch(cnf_contents, 0.4, 100000)
 
     for i in range(1):
         solver.main()

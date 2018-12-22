@@ -1,8 +1,8 @@
 import random
-from SatUtils import SatUtils
-from noveltysearch import NoveltySearch
 import time
 
+from SatUtils import SatUtils
+from noveltysearch import NoveltySearch
 from walk_sat import WalkSat
 
 
@@ -10,20 +10,20 @@ class NoveltyPlus:
 
     def main(self, formula, wp, p, max_iterations):
         # instantiate required search and util objects
-        utils = SatUtils()
         novelty_search = NoveltySearch(formula, p, 1)
         variables = formula[0]
         walkSat = WalkSat()
 
         # initialize first solution proposal
-        proposed_solution = utils.initialize_variables(len(variables))
+        proposed_solution = SatUtils.initialize_variables(variables)
 
         # start the timer
         start = time.time()
         end = None
 
         for i in range(max_iterations):
-            solution_found, unsat_clause, unsat_clause_list = utils.solution_status_with_unsat_clauses(formula, proposed_solution)
+            solution_found, unsat_clause, unsat_clause_list = SatUtils.solution_status_with_unsat_clauses(formula,
+                                                                                                          proposed_solution)
 
             # if a solution has been identified break out of the search loop and record it
             if solution_found is True:
@@ -38,18 +38,18 @@ class NoveltyPlus:
                 random_variable_to_flip = random.choice(variables)
                 random_unsat_clause = random.choice(unsat_clause_list)
 
-                best_flip = novelty_search.execute_search(proposed_solution, random_variable_to_flip, random_unsat_clause)
+                best_flip = novelty_search.execute_search(proposed_solution, random_variable_to_flip,
+                                                          random_unsat_clause)
 
-                proposed_solution[best_flip] = utils.flip_var(proposed_solution[best_flip])
+                proposed_solution[best_flip] = SatUtils.flip_var(proposed_solution[best_flip])
 
 
 if __name__ == '__main__':
     instance_path = "./sat_data/uf20-020.cnf"
 
-    utils = SatUtils()
     wp = 0.4
     p = 0.3
-    cnf_contents = utils.read_instance(instance_path)
+    cnf_contents = SatUtils.read_instance(instance_path)
     solver = NoveltyPlus()
 
     for experiment in range(100):

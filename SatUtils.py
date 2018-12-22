@@ -1,7 +1,7 @@
-
 import sys
 
 import numpy as np
+
 
 class SatUtils:
 
@@ -64,7 +64,8 @@ class SatUtils:
         file.close()
         return [variables, clause]
 
-    def flip_var(self, variable):
+    @staticmethod
+    def flip_var(variable):
         """
         Flips a value of a variable to the opposite value, e.g. if variable passed in has value of 0 it returns 1 and vice versa
         :param variable: variable to be flipped
@@ -76,7 +77,8 @@ class SatUtils:
             variable = 0
         return variable
 
-    def initialize_variables(self, count):
+    @staticmethod
+    def initialize_variables(count):
         """
         Initialize a dictionary of a given size - defined by count parameter - with randomly assigned 0 or 1 values.
         :param count: the number of variables to be initialized
@@ -85,7 +87,8 @@ class SatUtils:
 
         return dict(enumerate(np.random.randint(2, size=count), 1))
 
-    def solution_status(self, formula, sol):
+    @staticmethod
+    def solution_status(formula, sol):
         """
         Based off of Week 8 Lab.
 
@@ -116,7 +119,8 @@ class SatUtils:
             return False, unsat_clause
         return True, unsat_clause
 
-    def solution_status_with_unsat_clauses(self, instance, sol):
+    @staticmethod
+    def solution_status_with_unsat_clauses(instance, sol):
         clause = instance[1]
         unsat_clause = 0
         unsat_clause_list = []
@@ -139,10 +143,3 @@ class SatUtils:
         if unsat_clause > 0:
             return False, unsat_clause, unsat_clause_list
         return True, unsat_clause, unsat_clause_list
-
-    @staticmethod
-    def flip_variable(item, index):
-        if item[index] == 0:
-            item[index] = 1
-        elif item[index] == 1:
-            item[index] = 0
