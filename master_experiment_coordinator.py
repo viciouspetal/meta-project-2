@@ -20,7 +20,6 @@ class MasterExperiment:
                 gsat_solver.main(self.gsat_params["max_restarts"], self.gsat_params["max_iterations"], filepath)
                 print("########### Novelty Plus {0} ###########".format(filepath))
                 novelty_plus_solver.main(self.novelty_plus_params["wp"], self.novelty_plus_params["p"], self.novelty_plus_params["max_iterations"], filepath)
-        pass
 
 
 if __name__ == '__main__':
