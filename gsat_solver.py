@@ -1,8 +1,7 @@
 import sys
 import time
 
-
-from GsatUtils import GsatUtils
+from SatUtils import SatUtils
 
 
 class GsatSolver:
@@ -11,26 +10,27 @@ class GsatSolver:
     max_tabu_elements = 5
 
     def main(self, max_restarts=100, max_iterations=1000, instance_path="./sat_data/test.cnf", experiment_count=1):
-        utils = GsatUtils()
-        instance = utils.readInstance(instance_path)
+        instance = SatUtils.read_instance(instance_path)
         var_count = len(instance[0])
 
         print("~ experiment {0} ~".format(experiment_count))
-        start = time. time()
+        start = time.time()
         end = None
 
         for restart in range(max_restarts):
             # print("#### restart {0} ###".format(restart))
-            best_solution = utils.initialize_variables(var_count)
+            best_solution = SatUtils.initialize_variables(var_count)
 
             for iteration in range(max_iterations):
-                solution_status, no_of_unsat_clauses = utils.solutionStatus(instance, best_solution)
+                solution_status, no_of_unsat_clauses = SatUtils.solution_status(instance, best_solution)
 
                 # if solution has been found terminate the search
                 if solution_status is True:
-                    end = time. time()
+                    end = time.time()
 
-                    print("Iteration,{0},Restart,{1},Duration,{2}, Solution, {3}".format(iteration, restart, end - start, best_solution))
+                    print(
+                        "Iteration,{0},Restart,{1},Duration,{2}, Solution, {3}".format(iteration, restart, end - start,
+                                                                                       best_solution))
                     return
                 best_solution = self.get_best_var_to_flip(instance, best_solution, no_of_unsat_clauses)
 
@@ -40,21 +40,21 @@ class GsatSolver:
     def get_best_var_to_flip(self, instance, best_solution, current_no_of_unsat_clauses):
         best_no_of_unsat_clauses = current_no_of_unsat_clauses
         best = best_solution.copy()
-        utils = GsatUtils()
+        utils = SatUtils()
 
         for i in range(1, len(best)):
             # checking if given variable is part of tabu list. If it is then next var is selected for the flip
             if self.is_var_tabu(i):
-                 continue
+                continue
 
             tmp_solution = best_solution.copy()
             # working copy of the proposed solution
             var_to_flip = tmp_solution[i]
 
             # flipping a selected variable to opposing value
-            tmp_solution[i] = utils.flip_var(var_to_flip)
+            tmp_solution[i] = SatUtils.flip_var(var_to_flip)
 
-            _, no_of_unsat_clauses = utils.solutionStatus(instance, tmp_solution)
+            _, no_of_unsat_clauses = SatUtils.solution_status(instance, tmp_solution)
 
             # if solution hasn't been found check if proposed temp solution is better than previous best
             if no_of_unsat_clauses < best_no_of_unsat_clauses:
@@ -89,12 +89,12 @@ class GsatSolver:
 
         GsatSolver.tabu.append(position_to_tabu)
 
+
 if __name__ == '__main__':
     solver = GsatSolver()
 
     if len(sys.argv) > 1:
-        for i in range(1
-                       ):
+        for i in range(1):
             solver.main(10, 1000, sys.argv[1], i)
     else:
         for i in range(1):

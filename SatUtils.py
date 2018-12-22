@@ -1,11 +1,19 @@
-"""Based off of Week 8 Lab"""
 import sys
 
 import numpy as np
 
-class GsatUtils:
 
-    def readInstance(self, fName):
+class SatUtils:
+
+    @staticmethod
+    def read_instance(fName):
+        """Based off of Week 8 Lab
+        Reads in a a CNF file from a path provided.
+        Returns an array of arrays, where element 0 contains variables, and element 1 in itself is an array of arrays
+        where each internal array represents a 3-variable clause to be fulfilled.
+        :param fName: relative path to cnf file to be read in
+        :return variables and the formula
+        """
         file = open(fName, 'r')
         tVariables = -1
         tClauses = -1
@@ -56,7 +64,8 @@ class GsatUtils:
         file.close()
         return [variables, clause]
 
-    def flip_var(self, variable):
+    @staticmethod
+    def flip_var(variable):
         """
         Flips a value of a variable to the opposite value, e.g. if variable passed in has value of 0 it returns 1 and vice versa
         :param variable: variable to be flipped
@@ -68,7 +77,8 @@ class GsatUtils:
             variable = 0
         return variable
 
-    def initialize_variables(self, count):
+    @staticmethod
+    def initialize_variables(count):
         """
         Initialize a dictionary of a given size - defined by count parameter - with randomly assigned 0 or 1 values.
         :param count: the number of variables to be initialized
@@ -77,8 +87,11 @@ class GsatUtils:
 
         return dict(enumerate(np.random.randint(2, size=count), 1))
 
-    def solutionStatus(self, formula, sol):
+    @staticmethod
+    def solution_status(formula, sol):
         """
+        Based off of Week 8 Lab.
+
         Verifies the number of unsatisified clauses for a given solution proposed. Returns True if a solution
         satisfying all clauses has been found.
         Returns False along with the number of unsatisfied clauses if a solution has not been found.
@@ -105,3 +118,28 @@ class GsatUtils:
         if unsat_clause > 0:
             return False, unsat_clause
         return True, unsat_clause
+
+    @staticmethod
+    def solution_status_with_unsat_clauses(instance, sol):
+        clause = instance[1]
+        unsat_clause = 0
+        unsat_clause_list = []
+        for clause_i in clause:
+            cStatus = False
+            tmp = []
+            for var in clause_i:
+                if var < 0:
+                    if (1 - sol[-var]) == 1:
+                        cStatus = True
+                    tmp.append([var, sol[-var]])
+                else:
+                    tmp.append([var, sol[var]])
+                    if sol[var] == 1:
+                        cStatus = True
+            if not cStatus:
+                unsat_clause += 1
+                unsat_clause_list.append(clause_i)
+
+        if unsat_clause > 0:
+            return False, unsat_clause, unsat_clause_list
+        return True, unsat_clause, unsat_clause_list
