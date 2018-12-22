@@ -12,7 +12,22 @@ If file redirect is omitted all results will be printed to the console.
 # How to identify a solution?
 For each of the algorithms implemented, if a solution has been identified a single print statement will be shown in the console in the following format:
  - __GSAT:____"Iteration,1,Restart,0,Duration,0.0"__- specifying during which restart and iteration a solution has been found, as well as how long it took in seconds, to find it
- - __Novelty and Novelty+:____"Iteration,48020,Duration,18.190040349960327"__- since no restarts were specified for these algorithms, a solution print only provides information about which iteration has it been found and how long it took to find it in seconds 
+ - __Novelty and Novelty+:____"Iteration,48020,Duration,18.190040349960327"__- since as per project specification, no restarts were allowed for these algorithms a solution print only provides information about which iteration has it been found and how long it took to find it in seconds
+ 
+# Project structure
+This project contains the following source files and folders:
+- __master_experiment_coordinator.py__ - used to gather all experiment data in 1 go
+- __Algorithm Files__
+    - gsat_solver.py - GSAT implementation
+    - novelty_plus.py - Novelty+ implementation
+    - walk_sat.py - WalkSAT implementation, used as part of Novelty+ execution
+    - noveltysearch.py - Novelty implementation, used as part of Novelty+ execution 
+- __Utilities files__
+    - SatUtils.py - holds various core functions, e.g. initializing variables, flipping variable values, etc
+- __Data Folders__
+    - sat_data - holds CNF data for experiments
+    - sat_test_data - holds CNF file used in unit tests
+- __test_solvers_and_utils.py__ - contains unit tests for various core functions 
 
 # Running individual algorithms
 Additionally to running all experiments in 1 command, each algorithm, except WalkSAT, has been setup to be run in isolation. 
