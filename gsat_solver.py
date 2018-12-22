@@ -2,7 +2,7 @@ import sys
 import time
 
 
-from GsatUtils import GsatUtils
+from SatUtils import SatUtils
 
 
 class GsatSolver:
@@ -11,8 +11,8 @@ class GsatSolver:
     max_tabu_elements = 5
 
     def main(self, max_restarts=100, max_iterations=1000, instance_path="./sat_data/test.cnf", experiment_count=1):
-        utils = GsatUtils()
-        instance = utils.read_instance(instance_path)
+        utils = SatUtils()
+        instance = SatUtils.read_instance(instance_path)
         var_count = len(instance[0])
 
         print("~ experiment {0} ~".format(experiment_count))
@@ -40,7 +40,7 @@ class GsatSolver:
     def get_best_var_to_flip(self, instance, best_solution, current_no_of_unsat_clauses):
         best_no_of_unsat_clauses = current_no_of_unsat_clauses
         best = best_solution.copy()
-        utils = GsatUtils()
+        utils = SatUtils()
 
         for i in range(1, len(best)):
             # checking if given variable is part of tabu list. If it is then next var is selected for the flip

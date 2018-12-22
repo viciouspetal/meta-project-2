@@ -3,9 +3,10 @@ import sys
 
 import numpy as np
 
-class GsatUtils:
+class SatUtils:
 
-    def read_instance(self, fName):
+    @staticmethod
+    def read_instance(fName):
         """Based off of Week 8 Lab
         Reads in a a CNF file from a path provided.
         Returns an array of arrays, where element 0 contains variables, and element 1 in itself is an array of arrays
@@ -114,3 +115,34 @@ class GsatUtils:
         if unsat_clause > 0:
             return False, unsat_clause
         return True, unsat_clause
+
+    def solution_status_with_unsat_clauses(self, instance, sol):
+        clause = instance[1]
+        unsat_clause = 0
+        unsat_clause_list = []
+        for clause_i in clause:
+            cStatus = False
+            tmp = []
+            for var in clause_i:
+                if var < 0:
+                    if (1 - sol[-var]) == 1:
+                        cStatus = True
+                    tmp.append([var, sol[-var]])
+                else:
+                    tmp.append([var, sol[var]])
+                    if sol[var] == 1:
+                        cStatus = True
+            if not cStatus:
+                unsat_clause += 1
+                unsat_clause_list.append(clause_i)
+
+        if unsat_clause > 0:
+            return False, unsat_clause, unsat_clause_list
+        return True, unsat_clause, unsat_clause_list
+
+    @staticmethod
+    def flip_variable(item, index):
+        if item[index] == 0:
+            item[index] = 1
+        elif item[index] == 1:
+            item[index] = 0
