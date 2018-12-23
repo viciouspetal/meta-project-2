@@ -8,7 +8,7 @@ A master experiment file running the following experiments has been constructed.
 Master file can be executed as follows:
 `python master_experiment_coordinator.py > results_file.csv`
 
-It is all setup to run 100 experiments for GSAT/NOvelty+ and 5 for each TSP algorithm, for each input file and all data has been hardcoded for ease of running.
+It is all setup to run 100 experiments for GSAT/Novelty+ and 5 for each TSP algorithm, for each input file and all data has been hardcoded for ease of running.
 
 It has been setup to collect all print statements, with
  - 1 print line for each solution found for GSAT/Novelty+ 
