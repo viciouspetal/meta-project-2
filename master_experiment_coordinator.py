@@ -30,9 +30,9 @@ class MasterExperiment:
         for i in range(sat_experiments_count):
             for sat_file in self.sat_input_data_files:
                 filepath = os.path.join(self.sat_experiment_data_dir, sat_file)
-                print("########### GSAT {0} ###########".format(filepath))
+                print("########### GSAT {0}, File {1} ###########".format(i, sat_file))
                 gsat_solver.main(self.gsat_params["max_restarts"], self.gsat_params["max_iterations"], filepath)
-                print("########### Novelty Plus {0} ###########".format(filepath))
+                print("########### Novelty Plus {0}, File {1} ###########".format(i, sat_file))
                 novelty_plus_solver.main(self.novelty_plus_params["wp"], self.novelty_plus_params["p"],
                                          self.novelty_plus_params["max_iterations"], filepath)
 
@@ -53,4 +53,4 @@ class MasterExperiment:
 if __name__ == '__main__':
     runner = MasterExperiment()
 
-    runner.main(0, 1)
+    runner.main(100, 0)

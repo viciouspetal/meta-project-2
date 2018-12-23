@@ -1,0 +1,13 @@
+########### GSAT 0, File uf20-020.cnf ###########
+Iteration,1000,Restart,0,Duration,0.026001691818237305
+########### Novelty Plus 0, File uf20-020.cnf ###########
+Iteration,4975,Duration,1.896108627319336
+########### GSAT 0, File uf20-021.cnf ###########
+########### Novelty Plus 0, File uf20-021.cnf ###########
+########### GSAT 1, File uf20-020.cnf ###########
+########### Novelty Plus 1, File uf20-020.cnf ###########
+Iteration,52603,Duration,19.70112681388855
+########### GSAT 1, File uf20-021.cnf ###########
+Iteration,564,Restart,4,Duration,0.026001691818237305
+########### Novelty Plus 1, File uf20-021.cnf ###########
+Iteration,75,Duration,1.76215475
