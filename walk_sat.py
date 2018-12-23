@@ -1,6 +1,6 @@
 import random
 
-from SatUtils import SatUtils
+from sat_utils import SatUtils
 
 
 class WalkSat:

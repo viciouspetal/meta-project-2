@@ -2,12 +2,12 @@ import random
 import sys
 import time
 
-from SatUtils import SatUtils
-from noveltysearch import NoveltySearch
+from sat_utils import SatUtils
+from novelty_search import NoveltySearch
 from walk_sat import WalkSat
 
 
-class NoveltyPlus:
+class NoveltyPlusSolver:
 
     def main(self, wp, p, max_iterations, instance_path):
         cnf_contents = SatUtils.read_instance(instance_path)
@@ -57,7 +57,7 @@ if __name__ == '__main__':
     else:
         instance_path = "./sat_data/uf20-020.cnf"
 
-    solver = NoveltyPlus()
+    solver = NoveltyPlusSolver()
 
     for experiment in range(1):
         solver.main(wp=0.4, p=0.3, max_iterations=100000, instance_path=instance_path)
