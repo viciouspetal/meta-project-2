@@ -17,7 +17,7 @@ class ResultsParser:
         gsat_solution_pattern = re.compile('Iteration,\d+,Restart,\d,Duration,\d+.\d*.*')
         novelty_solution_pattern = re.compile('Iteration,\d+,Duration,\d+.\d*.*')
 
-        reader = Reader('../data.csv')
+        reader = Reader('./data.csv')
         lines = reader.read()
         file_020 = 'uf20-020.cnf'
         file_021 = 'uf20-021.cnf'
