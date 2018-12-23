@@ -1,7 +1,7 @@
 import sys
 import time
 
-from SatUtils import SatUtils
+from sat_utils import SatUtils
 
 
 class GsatSolver:

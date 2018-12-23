@@ -2,7 +2,8 @@ import heapq
 import random
 import unittest
 
-from SatUtils import SatUtils
+from sat_utils import SatUtils
+from tsp_solver import TspSolver
 
 
 class TestSolversAndUtils(unittest.TestCase):
@@ -45,6 +46,8 @@ class TestSolversAndUtils(unittest.TestCase):
 
     def test_initializing_variables(self):
         result = SatUtils.initialize_variables(10)
+
+        print(result)
 
         self.assertEqual(len(result), 10)
 
@@ -93,6 +96,14 @@ class TestSolversAndUtils(unittest.TestCase):
         self.assertTrue(solution_found)
         self.assertEqual(unsat_result, 0)
         self.assertEqual(len(unsat_list), 0)
+
+    def test_generate_3_opt_swap(self):
+        #filepath, max_iterations, local_search_time_limit, algorithm
+        tour = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+        tsp = TspSolver(None, None, None, None)
+        result = tsp.generate_3_opt_swap(2, 6, 9, tour)
+        expected_result = [0, 1, 6, 5, 4, 3, 2, 9, 8, 7, 0]
+        self.assertEqual(result, expected_result)
 
 
 if __name__ == '__main__':

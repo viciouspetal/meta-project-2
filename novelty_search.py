@@ -3,7 +3,7 @@ import random
 import time
 import sys
 
-from SatUtils import SatUtils
+from sat_utils import SatUtils
 
 
 class NoveltySearch:
